@@ -10,6 +10,9 @@
     <h1>Query Blockchain Transaction</h1>
 
     <form action="{{ url_for('result') }}" method="POST">
+        <label for="api_key">Enter the API key:</label>
+        <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required><br><br>
+        
         <label for="hash">Enter the hash:</label>
         <input type="text" id="hash" name="hash" placeholder="e.g., 0x123abc..." required>
         <input type="submit" value="Submit">

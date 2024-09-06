@@ -7,31 +7,18 @@ from dotenv import load_dotenv
 # Initialize Flask
 app = Flask(__name__)
 
-# Load environment variables
-load_dotenv()
-api_key = os.getenv('API_KEY')
-
-# If no API_KEY in environment, request it from user (temporary)
-if api_key is None:
-    api_key = input("Introduce the API key: ")
-
-# API headers
-headers = {
-    "API-Key": api_key
-}
-
-def arkham_request(url, params=None):
+def arkham_request(url, headers, params=None):
     response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200:
         return response.json()
     else:
         return {"error": f"Error in API request: {response.status_code}"}
 
-def arkham_hash(hash):
+def arkham_hash(hash, headers):
     url = f"https://api.arkhamintelligence.com/tx/{hash}"
-    return arkham_request(url)
+    return arkham_request(url, headers)
 
-def arkham_transfers(start_time_str, usd_value):
+def arkham_transfers(headers, start_time_str, usd_value):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
     start_time = int(str_time_dt.timestamp() * 1000)
@@ -80,8 +67,15 @@ def index():
 
 @app.route('/result', methods=['POST'])
 def result():
+    # API headers
+    api_key = request.form.get('api_key')
+    headers = {
+        "API-Key": api_key
+    }
+
+    # Hash
     hash = request.form.get('hash')
-    hash_data = arkham_hash(hash)
+    hash_data = arkham_hash(hash, headers)
     
     # Check if the hash was successful
     if "error" in hash_data:
@@ -91,7 +85,7 @@ def result():
     if start_time is None or usd_value is None:
         return render_template('error.html', error_message="Error with the input hash or blockchain not supported.")
     
-    transfers_data = arkham_transfers(start_time, usd_value)
+    transfers_data = arkham_transfers(headers, start_time, usd_value)
     if 'error' in transfers_data:
         return render_template('error.html', error_message=transfers_data['error'])
 
