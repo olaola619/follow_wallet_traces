@@ -52,8 +52,6 @@ coverage.xml
 
 # Environment variables and sensitive data
 .env
-.env.*
-!.env.example  # You can include a template example for the .env file if necessary
 
 # IDEs
 .vscode/
