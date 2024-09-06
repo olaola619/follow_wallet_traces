@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Estilos adicionales para colorear los elementos */
+        .blockchain { color: #b4b217; } /* Amarillo */
+        .usd-amount { color: #17b843; font-weight: bold;} /* Verde */
+        .date { color: #75115a; font-weight: bold;} /* Morado */
+    </style>
+</head>
+<body>
+    <h1>Transaction Results</h1>
+
+    <h2>Input Hash Information</h2>
+    <ul>
+        {% for blockchain, data in hash_data.items() %}
+        <li>
+            <strong class="blockchain">Blockchain: {{ blockchain }}</strong><br>
+            {% if blockchain == 'bitcoin' %}
+                <strong>Transaction Hash:</strong> {{ data['txid'] }}<br>
+                <strong>To:</strong> {{ data['outputs'][0]['address']['address'] }}<br>
+                <strong>Amount:</strong> {{ data['outputValue'] }} BTC = <span class="usd-amount">{{ data['outputUSD'] }} USD</span><br>
+            {% else %}
+                <strong>Transaction Hash:</strong> {{ data['hash'] }}<br>
+                <strong>From:</strong> {{ data.get('fromAddress', 'N/A') }}<br>
+                <strong>To:</strong> {{ data.get('toAddress', 'N/A') }}<br>
+                <strong>Amount:</strong> {{ data['unitValue'] }} {{ data['tokenSymbol'] }} = <span class="usd-amount">{{ data['usdValue'] }} USD</span><br>
+            {% endif %}
+            <strong>Date: <span class="date">{{ data['blockTimestamp'] }}</strong></span><br>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Found Transfers (Outputs)</h2>
+    {% if transfers %}
+        <ul>
+        {% for tx in transfers %}
+            <li>
+                <strong class="blockchain">Blockchain: {{ tx['chain'] }}</strong><br>
+                {% if 'transactionHash' in tx %}
+                    <strong>Transaction Hash:</strong> {{ tx['transactionHash'] }}<br>
+                    <strong>From:</strong> {{ tx['fromAddress']['address'] }}<br>
+                    <strong>To:</strong> {{ tx['toAddress']['address'] }}<br>
+                    <strong>Token:</strong> {{ tx['tokenName'] }}<br>
+                    <strong>Amount:</strong> {{ tx['unitValue'] }} {{ tx['tokenSymbol'] }} = <span class="usd-amount">${{ tx['historicalUSD'] }}</span><br>
+                {% elif 'txid' in tx %}
+                    <strong>Transaction Hash:</strong> {{ tx['txid'] }}<br>
+                    <strong>From:</strong> {{ tx['fromAddress']['address'] }}<br>
+                    <strong>To:</strong><br>
+                    <p>
+                        {% for address in tx['toAddresses'] %}
+                            {{ address['address']['address'] }}: {{ address['value'] }} BTC{% if not loop.last %}, {% endif %}<br>
+                        {% endfor %}
+                    </p>
+                    <strong>Amount:</strong> {{ tx['unitValue'] }} BTC = <span class="usd-amount">${{ tx['historicalUSD'] }}</span><br>
+                {% endif %}
+                <strong>Date:</strong> <span class="date">{{ tx['blockTimestamp'] }}</span><br>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No transfers found for this hash.</p>
+    {% endif %}
+</body>
+</html>
