@@ -135,17 +135,23 @@ def print_in_tx(hash_data):
             return hash_data[blockchain]['blockTimestamp'], hash_data[blockchain]['usdValue']
 
 def main():
-    print(f"{YELLOW}FIND THE DESTINATION WALLETS FROM FF, SS AND CN{RESET}\n")
-    hash = input("Introduce the input hash: ")
-    hash_data = arkham_hash(hash)
+    print(f"{YELLOW}FIND THE DESTINATION WALLETS FROM FF, SS AND CN{RESET}")
 
-    start_time, usd_value = print_in_tx(hash_data)
+    while True:
+        hash = input("\nIntroduce the input hash ([F] to finish): ")
+        print("")
+        if hash.upper() == 'F':
+                break
+        
+        hash_data = arkham_hash(hash)
 
-    if (start_time == None or usd_value == None):
-        print(f"{RED}There were an error with the input hash or blockchain not supported!{RESET}")
-        return
-    
-    print(f"\n{BLUE}OUTPUT{RESET}\n")
-    arkham_transfers(start_time, usd_value) 
+        start_time, usd_value = print_in_tx(hash_data)
+
+        if (start_time == None or usd_value == None):
+            print(f"{RED}There were an error with the input hash or blockchain not supported!{RESET}")
+            return
+        
+        print(f"\n{BLUE}OUTPUT{RESET}\n")
+        arkham_transfers(start_time, usd_value) 
 
 main()
