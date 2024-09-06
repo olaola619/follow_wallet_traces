@@ -1,0 +1,90 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cython debug symbols
+*.pyd
+
+# Virtual environment
+env/
+venv/
+ENV/
+.venv/
+.ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Python-specific packaging
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+
+# Web3 or Blockchain-related dependencies (if applicable)
+node_modules/
+*.log
+
+# Pytest cache
+.pytest_cache/
+.tox/
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Logs and database files
+*.log
+*.sql
+*.sqlite3
+
+# Environment variables and sensitive data
+.env
+.env.*
+!.env.example  # You can include a template example for the .env file if necessary
+
+# IDEs
+.vscode/
+.idea/
+
+# Mac OS specific
+.DS_Store
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# PyInstaller
+#  Usually these files are written by pyinstaller, but should not be added to version control.
+*.manifest
+*.spec
+
+# pytest specific
+.pytest_cache/
+
+# Files created by pyenv
+.python-version
+
+# Local terraform files
+.terraform/
+.terraform.lock.hcl
+
+# Ansible specific files
+*.retry
+
+# Pylint report
+pylint-report.txt
