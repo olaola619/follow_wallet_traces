@@ -4,6 +4,9 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
@@ -11,6 +14,7 @@ h1 {
     background-color: #ff8c00;
     padding: 20px;
     margin-bottom: 30px;
+    text-align: center;
 }
 
 h2 {
@@ -21,9 +25,10 @@ form {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
-    width: 50%;
     margin: 0 auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding-right: 40px;
+    width: 80%;
 }
 
 label {
@@ -37,6 +42,18 @@ input[type="text"] {
     border: 1px solid #ccc;
     width: 100%;
     margin-bottom: 20px;
+}
+
+textarea {
+    resize: none;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 input[type="submit"] {
@@ -91,6 +108,51 @@ hr {
     box-shadow: 0 0 10px rgba(255, 77, 79, 0.2);
 }
 
+/* Estilos para la estructura de las dos columnas */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    margin-top: 20px;
+    padding: 20px; /* Añadí padding para separar el contenedor de los bordes de la página */
+    box-sizing: border-box; /* Asegura que el padding no afecte al ancho del contenedor */
+}
+
+/* Estilos para el formulario común (API Key) */
+.api-key-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 10px;
+    width: 20%; /* Aumenta el ancho del contenedor */
+    padding: 20px; /* Añade más espacio alrededor del contenido */
+    padding-right: 40px;
+}
+
+/* Estilos para las columnas */
+.column {
+    width: 45%;
+    padding: 30px;
+    margin: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Asegura que el padding no afecte al ancho de la columna */
+}
+
+/* Estilos para el formulario de la izquierda (Programa actual) */
+.left-column {
+    background-color: #f9f9f9;
+}
+
+/* Estilos para el formulario de la derecha (Programa de varios hashes) */
+.right-column {
+    background-color: #f1f1f1;
+}
+
 a {
     color: #007bff;
     text-decoration: none;
@@ -99,3 +161,8 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+/* Estilos adicionales para colorear los elementos */
+.blockchain { color: #b4b217; } /* Amarillo */
+.usd-amount { color: #17b843; font-weight: bold; } /* Verde */
+.date { color: #75115a; font-weight: bold; } /* Morado */
