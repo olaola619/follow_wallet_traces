@@ -103,6 +103,10 @@
                             <strong>Repetitions:</strong> {{ result.repetitions }}<br>
                             <strong class="blockchain">Blockchain: {{ result.blockchain }}</strong><br>
                             <strong>To:</strong> {{ result.to }}<br>
+                            <strong>Hash(es):</strong>
+                            {% for hash in result.hashes %}
+                                {{ hash }}<br>
+                            {% endfor %}
                         </li>
                     {% endfor %}
                 </ul>

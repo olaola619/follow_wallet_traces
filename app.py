@@ -128,12 +128,16 @@ def index():
                                     })
         
         count_reps = {}
+        hashes_to = {}
         for element in multi_hash_data:
             to_address = element["to"]
             if to_address in count_reps:
                 count_reps[to_address] += 1
+                hashes_to[to_address].append(element['hash'])
             else:
                 count_reps[to_address] = 1
+                hashes_to[to_address] = []
+                hashes_to[to_address].append(element['hash'])
                 
         
         agregated_addresses = set()
@@ -142,6 +146,7 @@ def index():
             if to_address not in agregated_addresses:
                 new_element = {k: hash[k] for k in ("blockchain", "to")}
                 new_element["repetitions"] = count_reps[to_address]
+                new_element["hashes"] = hashes_to[to_address]
 
                 address_list.append(new_element)
                 agregated_addresses.add(to_address)
