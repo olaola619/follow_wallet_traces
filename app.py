@@ -75,6 +75,7 @@ def index():
     address_list = []
     hash_data_multiple = None
     transfers_multiple = None
+    hashes_data = []
 
     if request.method == 'POST' and 'hashes' in request.form:
         # API headers
@@ -96,6 +97,7 @@ def index():
 
             # Process each hash
             hash_data_multiple = arkham_hash(hash, headers)
+            hashes_data.append(hash_data_multiple)
 
             if "error" in hash_data_multiple:
                 error_message = hash_data_multiple["error"]
@@ -153,7 +155,7 @@ def index():
 
         address_list.sort(key = lambda x: x["repetitions"], reverse = True)
 
-    return render_template('index.html', hash_data=hash_data, transfers=transfers, address_list=address_list, error_message=error_message)
+    return render_template('index.html', hash_data=hash_data, transfers=transfers, address_list=address_list, hashes_data=hashes_data, error_message=error_message)
 
 def print_in_tx(hash_data):
     blockchains_list = list(hash_data.keys())
