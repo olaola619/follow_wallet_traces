@@ -16,6 +16,17 @@ def arkham_hash(hash, headers):
     url = f"https://api.arkhamintelligence.com/tx/{hash}"
     return arkham_request(url, headers)
 
+def arkham_transfer_hash(hash, chain, transferType, headers):
+    url = f"https://api.arkhamintelligence.com/tx/{hash}"
+
+    params = {
+        "chain": chain,
+        "transferType": transferType,
+    }
+
+    response = arkham_request(url, headers=headers, params=params)
+    return response
+
 def arkham_transfers(headers, start_time_str, usd_value):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
@@ -96,7 +107,13 @@ def index():
                 continue
 
             # Process each hash
-            hash_data_multiple = arkham_hash(hash, headers)
+            hash_data_multiple_pre = arkham_hash(hash, headers)
+            for blockchain, data in hash_data_multiple_pre.items():
+                if blockchain == 'bitcoin':
+                    continue
+                else:
+                    hash_data_multiple = arkham_transfer_hash(hash, blockchain, 'external' if data['usdValue'] == 0 else 'external', headers)
+
             hashes_data.append(hash_data_multiple)
 
             if "error" in hash_data_multiple:
