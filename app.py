@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Initialize Flask
 app = Flask(__name__)
@@ -30,6 +30,7 @@ def arkham_transfer_hash(hash, chain, transferType, headers):
 def arkham_transfers(headers, start_time_str, usd_value):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
+    str_time_dt += timedelta(minutes = 1)
     start_time = int(str_time_dt.timestamp() * 1000)
     
     params = {
@@ -107,12 +108,14 @@ def index():
                 continue
 
             # Process each hash
-            hash_data_multiple_pre = arkham_hash(hash, headers)
-            for blockchain, data in hash_data_multiple_pre.items():
-                if blockchain == 'bitcoin':
-                    continue
-                else:
-                    hash_data_multiple = arkham_transfer_hash(hash, blockchain, 'external' if data['usdValue'] == 0 else 'external', headers)
+            hash_data_multiple = arkham_hash(hash, headers)
+            # Process each hash
+            # hash_data_multiple_pre = arkham_hash(hash, headers)
+            # for blockchain, data in hash_data_multiple_pre.items():
+            #     if blockchain == 'bitcoin':
+            #         continue
+            #     else:
+            #         hash_data_multiple = arkham_transfer_hash(hash, blockchain, 'token' if data['usdValue'] == 0 else 'internal', headers)
 
             hashes_data.append(hash_data_multiple)
 
@@ -132,13 +135,13 @@ def index():
 
                         for transfer in transfers_multiple:
                             dict_keys = (list(transfer.keys()))
-                            if 'transactionHash' in dict_keys:
+                            if 'transactionHash' in dict_keys and transfer['transactionHash'] not in hashes:
                                 multi_hash_data.append({
                                     "blockchain": transfer['chain'],
                                     "hash": transfer['transactionHash'],
                                     "to": transfer['toAddress']['address'],
                                 })
-                            elif 'txid' in dict_keys: # BTC blockchain
+                            elif 'txid' in dict_keys and transfer['txid'] not in hashes: # BTC blockchain
                                 for address in transfer['toAddresses']:
                                     multi_hash_data.append({
                                         "blockchain": transfer['fromAddress']['chain'],
