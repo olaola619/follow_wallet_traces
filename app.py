@@ -17,7 +17,7 @@ def arkham_hash(hash, headers):
     return arkham_request(url, headers)
 
 def arkham_transfer_hash(hash, chain, transferType, headers):
-    url = f"https://api.arkhamintelligence.com/tx/{hash}"
+    url = f"https://api.arkhamintelligence.com/transfers/tx/{hash}"
 
     params = {
         "chain": chain,
@@ -108,21 +108,24 @@ def index():
                 continue
 
             # Process each hash
-            hash_data_multiple = arkham_hash(hash, headers)
+            # hash_data_multiple = arkham_hash(hash, headers)
             # Process each hash
-            # hash_data_multiple_pre = arkham_hash(hash, headers)
-            # for blockchain, data in hash_data_multiple_pre.items():
-            #     if blockchain == 'bitcoin':
-            #         continue
-            #     else:
-            #         hash_data_multiple = arkham_transfer_hash(hash, blockchain, 'token' if data['usdValue'] == 0 else 'internal', headers)
+            hash_data_multiple_pre = arkham_hash(hash, headers)
+            for blockchain, data in hash_data_multiple_pre.items():
+                if blockchain == 'bitcoin':
+                    continue
+                else:
+                    hash_data_multiple = arkham_transfer_hash(hash, blockchain, 'token' if data['usdValue'] == 0 else 'external', headers)
+
 
             hashes_data.append(hash_data_multiple)
 
             if "error" in hash_data_multiple:
                 error_message = hash_data_multiple["error"]
             else:
-                start_time, usd_value = print_in_tx_multiple(hash_data_multiple)
+                # start_time, usd_value = print_in_tx_multiple(hash_data_multiple)
+                start_time = hash_data_multiple[0]["blockTimestamp"]
+                usd_value = hash_data_multiple[0]["historicalUSD"]
 
                 if start_time is None or usd_value is None:
                     error_message = "Error with the input hash or blockchain not supported."
