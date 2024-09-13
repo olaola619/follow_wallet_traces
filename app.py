@@ -124,6 +124,7 @@ def index():
         hashes = hashes_input.splitlines()
         hashes = list(set(hashes))  # Eliminate duplicates
         multi_hash_data = []
+        uniq_hashes = []
 
         for hash in hashes:
             hash = hash.strip()
@@ -180,7 +181,7 @@ def index():
 
                         for transfer in transfers_multiple:
                             dict_keys = (list(transfer.keys()))
-                            if 'transactionHash' in dict_keys and transfer['transactionHash'] not in hashes:
+                            if 'transactionHash' in dict_keys and transfer['transactionHash'] not in hashes and transfer['transactionHash'] not in uniq_hashes:
                                 multi_hash_data.append({
                                     "blockchain": transfer['chain'],
                                     "hash": transfer['transactionHash'],
@@ -190,7 +191,8 @@ def index():
                                     "tokenSymbol": transfer['tokenSymbol'],
                                     "historicalUSD": transfer['historicalUSD'],
                                 })
-                            elif 'txid' in dict_keys and transfer['txid'] not in hashes: # BTC blockchain
+                                uniq_hashes.append(transfer['transactionHash'])
+                            elif 'txid' in dict_keys and transfer['txid'] not in hashes and transfer['txid'] not in uniq_hashes: # BTC blockchain
                                 for address in transfer['toAddresses']:
                                     multi_hash_data.append({
                                         "blockchain": transfer['fromAddress']['chain'],
@@ -201,6 +203,7 @@ def index():
                                         "tokenSymbol": 'BTC',
                                         "historicalUSD": transfer["historicalUSD"],
                                     })
+                                    uniq_hashes.append(transfer['txid'])
         
         count_reps = {}
         hashes_to = {}
