@@ -34,22 +34,14 @@
             {% if hash_data %}
                 <h3>Hash introduced info</h3>
                 <ul>
-                    {% for blockchain, data in hash_data.items() %}
                     <li>
-                        <strong class="blockchain">Blockchain: {{ blockchain }}</strong><br>
-                        {% if blockchain == 'bitcoin' %}
-                            <strong>Transaction Hash:</strong> {{ data.get('txid', 'N/A') }}<br>
-                            <strong>To:</strong> {{ data['outputs'][0]['address']['address'] if data.get('outputs') else 'N/A' }}<br>
-                            <strong>Amount:</strong> {{ data.get('outputValue', 'N/A') }} BTC = <span class="usd-amount">{{ data.get('outputUSD', 'N/A') }} USD</span><br>
-                        {% else %}
-                            <strong>Transaction Hash:</strong> {{ data.get('hash', 'N/A') }}<br>
-                            <strong>From:</strong> {{ data.get('fromAddress', 'N/A') }}<br>
-                            <strong>To:</strong> {{ data.get('toAddress', 'N/A') }}<br>
-                            <strong>Amount:</strong> {{ data.get('unitValue', 'N/A') }} {{ data.get('tokenSymbol', 'N/A') }} = <span class="usd-amount">{{ data.get('usdValue', 'N/A') }} USD</span><br>
-                        {% endif %}
-                        <strong>Date:</strong> <span class="date">{{ data.get('blockTimestamp', 'N/A') }}</span><br>
+                        <strong class="blockchain">Blockchain: {{ hash_data[0]['chain'] }}</strong><br>
+                        <strong>Transaction Hash:</strong> {{ hash_data[0]['transactionHash'] }}<br>
+                        <strong>From:</strong> {{ hash_data[0]["fromAddress"]["address"] }}<br>
+                        <strong>To:</strong> {{ hash_data[0]["toAddress"]["address"] }}<br>
+                        <strong>Amount:</strong> {{ hash_data[0]['unitValue'] }} {{ hash_data[0]['tokenSymbol'] }} = <span class="usd-amount">{{ hash_data[0]['historicalUSD'] }} USD</span><br>
+                        <strong>Date:</strong> <span class="date">{{ hash_data[0]['blockTimestamp'] }}</span><br>
                     </li>
-                    {% endfor %}
                 </ul>
             {% endif %}
 
@@ -119,7 +111,7 @@
                             <strong>Repetitions:</strong> {{ result.repetitions }}<br>
                             <strong class="blockchain">Blockchain: {{ result.blockchain }}</strong><br>
                             <strong>To:</strong> {{ result.to }}<br>
-                            <strong>Hash(es):</strong>
+                            <strong>Hash(es):</strong><br>
                             {% for hash in result.hashes %}
                                 {{ hash }}<br>
                             {% endfor %}
