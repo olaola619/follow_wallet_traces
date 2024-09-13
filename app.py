@@ -230,23 +230,5 @@ def index():
 
     return render_template('index.html', hash_data=hash_data, transfers=transfers, address_list=address_list, hashes_data=hashes_data, error_message=error_message)
 
-def print_in_tx(hash_data):
-    blockchains_list = list(hash_data.keys())
-    for blockchain in blockchains_list:
-        if blockchain == 'bitcoin':
-            return hash_data[blockchain]['blockTimestamp'], hash_data[blockchain]['outputUSD']
-        elif blockchain != 'tron':
-            return hash_data[blockchain]['blockTimestamp'], hash_data[blockchain]['usdValue']
-    return None, None
-
-def print_in_tx_multiple(hash_data):
-    blockchains_list = list(hash_data.keys())
-    for blockchain in blockchains_list:
-        if blockchain == 'bitcoin':
-            return hash_data[blockchain]['blockTimestamp'], hash_data[blockchain]['outputUSD']
-        elif blockchain != 'tron':
-            return hash_data[blockchain]['blockTimestamp'], hash_data[blockchain]['usdValue']
-    return None, None
-
 if __name__ == '__main__':
     app.run(debug=True)
