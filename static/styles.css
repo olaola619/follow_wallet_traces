@@ -134,7 +134,7 @@ hr {
 
 /* Estilos para las columnas */
 .column {
-    width: 45%;
+    width: 50%;
     padding: 30px;
     margin: 20px;
     border: 1px solid #ddd;
@@ -160,6 +160,11 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.long-input {
+    width: 300px; /* Puedes ajustar este valor */
+    margin-bottom: 10px;
 }
 
 /* Estilos adicionales para colorear los elementos */

@@ -27,7 +27,7 @@ def arkham_transfer_hash(hash, chain, transferType, headers):
     response = arkham_request(url, headers=headers, params=params)
     return response
 
-def arkham_transfers(headers, start_time_str, usd_value):
+def arkham_transfers(headers, start_time_str, usd_value, percent_above, percent_below):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
     # str_time_dt += timedelta(minutes = 1)
@@ -39,8 +39,8 @@ def arkham_transfers(headers, start_time_str, usd_value):
         "timeGte": start_time,
         "sortKey": "time",
         "sortDir": "asc",
-        "usdLte": usd_value,
-        "usdGte": usd_value * 0.95,
+        "usdLte": usd_value * percent_below,
+        "usdGte": usd_value * percent_above,
         "limit": 10
     }
 
@@ -58,7 +58,7 @@ def index():
     transfers = []
     error_message = None
     error_display = None
-    
+
     try:
         if request.method == 'POST' and 'hash' in request.form:
             # API headers
@@ -66,6 +66,8 @@ def index():
             headers = {
                 "API-Key": api_key
             }
+            percent_above = (100 - float(request.form.get('percent_above'))) / 100
+            percent_below = (100 + float(request.form.get('percent_below'))) / 100
 
             # Single Hash
             hash = request.form.get('hash')
@@ -96,7 +98,7 @@ def index():
                 if start_time is None or usd_value is None:
                     error_message = "Error with the input hash or blockchain not supported."
                 else:
-                    transfers_data = arkham_transfers(headers, start_time, usd_value)
+                    transfers_data = arkham_transfers(headers, start_time, usd_value, percent_above, percent_below)
                     if 'error' in transfers_data:
                         error_message = transfers_data['error']
                     else:
@@ -124,6 +126,8 @@ def index():
             headers = {
                 "API-Key": api_key
             }
+            percent_above = (100 - float(request.form.get('percent_above'))) / 100
+            percent_below = (100 + float(request.form.get('percent_below'))) / 100
 
             # Multiple Hashes
             hashes_input = request.form.get('hashes')
@@ -170,7 +174,7 @@ def index():
                     if start_time is None or usd_value is None:
                         error_message = "Error with the input hash or blockchain not supported."
                     else:
-                        transfers_data = arkham_transfers(headers, start_time, usd_value)
+                        transfers_data = arkham_transfers(headers, start_time, usd_value, percent_above, percent_below)
                         if 'error' in transfers_data:
                             error_message = transfers_data['error']
                         else:
@@ -196,6 +200,7 @@ def index():
                                         "unitValue": transfer['unitValue'],
                                         "tokenSymbol": transfer['tokenSymbol'],
                                         "historicalUSD": transfer['historicalUSD'],
+                                        "blockTimestamp": transfer['blockTimestamp'],
                                     })
                                     uniq_hashes.append(transfer['transactionHash'])
                                 elif 'txid' in dict_keys and transfer['txid'] not in hashes and transfer['txid'] not in uniq_hashes: # BTC blockchain
@@ -208,6 +213,7 @@ def index():
                                             "unitValue": transfer['unitValue'],
                                             "tokenSymbol": 'BTC',
                                             "historicalUSD": transfer["historicalUSD"],
+                                            "blockTimestamp": transfer['blockTimestamp'],
                                         })
                                         uniq_hashes.append(transfer['txid'])
             
@@ -217,11 +223,19 @@ def index():
                 to_address = element["to"]
                 if to_address in count_reps:
                     count_reps[to_address] += 1
-                    hashes_to[to_address].append(element['hash'])
+                    hashes_to[to_address].append({
+                        "hash": element['hash'],
+                        "historicalUSD": element['historicalUSD'],
+                        "blockTimestamp": element['blockTimestamp'],
+                        })
                 else:
                     count_reps[to_address] = 1
                     hashes_to[to_address] = []
-                    hashes_to[to_address].append(element['hash'])
+                    hashes_to[to_address].append({
+                        "hash": element['hash'],
+                        "historicalUSD": element['historicalUSD'],
+                        "blockTimestamp": element['blockTimestamp'],
+                        })
                     
             
             agregated_addresses = set()

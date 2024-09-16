@@ -14,7 +14,11 @@
     <!-- Formulario para el campo de la API Key (se envía en ambos formularios) -->
     <div class="api-key-container">
         <label for="api_key">Enter the Arkham API key:</label><br>
-        <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required>
+        <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required><br>
+        <label for="percent_below">Enter % for max value searching transaction:</label><br>
+        <input type="text" id="percent_below" name="percent_below" class="long-input" placeholder="1% means hash_introduced_USD_value * 1.01" required><br>
+        <label for="percent_above">Enter % for min value searching transaction:</label><br>
+        <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5% means hash_introduced_USD_value * 0.95" required><br>
     </div>
 
     <!-- Contenedor de las dos columnas (Programa actual y nuevo programa) -->
@@ -111,9 +115,13 @@
                             <strong>Repetitions:</strong> {{ result.repetitions }}<br>
                             <strong class="blockchain">Blockchain: {{ result.blockchain }}</strong><br>
                             <strong>To:</strong> {{ result.to }}<br>
-                            <strong>Hash(es):</strong><br>
+                            <strong>Transaction(s):</strong><br>
                             {% for hash in result.hashes %}
-                                {{ hash }}<br>
+                                <ul><li>
+                                    <strong>Hash:</strong><br> {{ hash['hash'] }}<br>
+                                    <strong>Amount:</strong> <span class="usd-amount">{{ hash['historicalUSD'] }}</span><br>
+                                    <strong>Date:</strong> <span class="date">{{ hash['blockTimestamp'] }}</span><br>
+                                </li></ul>
                             {% endfor %}
                         </li>
                     {% endfor %}
@@ -132,6 +140,20 @@
             apiKeyInput.setAttribute('name', 'api_key');
             apiKeyInput.setAttribute('value', apiKey);
             form.appendChild(apiKeyInput);
+
+            const percent_above = document.getElementById('percent_above').value;
+            const percent_aboveInput = document.createElement('input');
+            percent_aboveInput.setAttribute('type', 'hidden');
+            percent_aboveInput.setAttribute('name', 'percent_above');
+            percent_aboveInput.setAttribute('value', percent_above);
+            form.appendChild(percent_aboveInput);
+
+            const percent_below = document.getElementById('percent_below').value;
+            const percent_belowInput = document.createElement('input');
+            percent_belowInput.setAttribute('type', 'hidden');
+            percent_belowInput.setAttribute('name', 'percent_below');
+            percent_belowInput.setAttribute('value', percent_below);
+            form.appendChild(percent_belowInput);
             return true;
         }
     </script>
