@@ -119,7 +119,7 @@
                             {% for hash in result.hashes %}
                                 <ul><li>
                                     <strong>Hash:</strong><br> {{ hash['hash'] }}<br>
-                                    <strong>Amount:</strong> <span class="usd-amount">{{ hash['historicalUSD'] }}</span><br>
+                                    <strong>Amount:</strong> <span class="usd-amount">{{ hash['historicalUSD'] }} USD</span><br>
                                     <strong>Date:</strong> <span class="date">{{ hash['blockTimestamp'] }}</span><br>
                                 </li></ul>
                             {% endfor %}
