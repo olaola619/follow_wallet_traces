@@ -157,5 +157,13 @@
         });
     </script>
 
+     <!-- Mostrar ventana emergente si hay error -->
+     {% if error_message %}
+     <script>
+         alert("Error: {{ error_display }}");
+         console.error("Error: {{ error_message }}");
+     </script>
+     {% endif %}
+
 </body>
 </html>
