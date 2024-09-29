@@ -15,10 +15,17 @@
     <div class="api-key-container">
         <label for="api_key">Enter the Arkham API key:</label><br>
         <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required><br>
-        <label for="percent_below">Enter % for max value searching transaction:</label><br>
-        <input type="text" id="percent_below" name="percent_below" class="long-input" placeholder="1% means hash_introduced_USD_value * 1.01" required><br>
-        <label for="percent_above">Enter % for min value searching transaction:</label><br>
-        <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5% means hash_introduced_USD_value * 0.95" required><br>
+        <label for="percent_below">Enter % (only number) for max value searching transaction:</label><br>
+        <input type="text" id="percent_below" name="percent_below" class="long-input" placeholder="1 means hash_introduced_USD_value * 1.01" required><br>
+        <label for="percent_above">Enter % (only number) for min value searching transaction:</label><br>
+        <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5 means hash_introduced_USD_value * 0.95" required><br>
+        <label for="minutes">Enter min-max diference in minutes searching transactions:</label><br>
+        <input type="text" id="minutes" name="minutes" class="long-input" placeholder="60 means 60 minutes max-min difference" required><br>
+        <label for="destination">Hash introduced is:</label><br>
+        <select id="destination" name="destination" required>
+            <option value="From">From</option>
+            <option value="To">To</option> 
+        </select> FF, SS or CN
     </div>
 
     <!-- Contenedor de las dos columnas (Programa actual y nuevo programa) -->
@@ -154,6 +161,21 @@
             percent_belowInput.setAttribute('name', 'percent_below');
             percent_belowInput.setAttribute('value', percent_below);
             form.appendChild(percent_belowInput);
+
+            const minutes = document.getElementById('minutes').value;
+            const minutesInput = document.createElement('input');
+            minutesInput.setAttribute('type', 'hidden');
+            minutesInput.setAttribute('name', 'minutes');
+            minutesInput.setAttribute('value', minutes);
+            form.appendChild(minutesInput);
+
+            const destination = document.getElementById('destination').value;
+            const destinationInput = document.createElement('input');
+            destinationInput.setAttribute('type', 'hidden');
+            destinationInput.setAttribute('name', 'destination');
+            destinationInput.setAttribute('value', destination);
+            form.appendChild(destinationInput);
+
             return true;
         }
     </script>

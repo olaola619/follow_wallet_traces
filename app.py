@@ -27,7 +27,7 @@ def arkham_transfer_hash(hash, chain, transferType, headers):
     response = arkham_request(url, headers=headers, params=params)
     return response
 
-def arkham_transfers(headers, start_time_str, usd_value, percent_above, percent_below):
+def arkham_transfers_asc(headers, start_time_str, usd_value, percent_above, percent_below):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
     # str_time_dt += timedelta(minutes = 1)
@@ -41,7 +41,30 @@ def arkham_transfers(headers, start_time_str, usd_value, percent_above, percent_
         "sortDir": "asc",
         "usdLte": usd_value * percent_below,
         "usdGte": usd_value * percent_above,
-        "limit": 10
+        "limit": 50
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": f"Error in API request: {response.status_code}"}
+
+def arkham_transfers_desc(headers, end_time_str, usd_value, percent_above, percent_below):
+    url = "https://api.arkhamintelligence.com/transfers"
+    str_time_dt = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M:%SZ")
+    # str_time_dt += timedelta(minutes = 1)
+    end_time = int(str_time_dt.timestamp() * 1000)
+    
+    params = {
+        "base": ["fixedfloat", "changenow", "simpleswap"],
+        "flow": "in",
+        "timeLte": end_time,
+        "sortKey": "time",
+        "sortDir": "desc",
+        "usdLte": usd_value * percent_below,
+        "usdGte": usd_value * percent_above,
+        "limit": 50
     }
 
     response = requests.get(url, headers=headers, params=params)
@@ -68,6 +91,8 @@ def index():
             }
             percent_above = (100 - float(request.form.get('percent_above'))) / 100
             percent_below = (100 + float(request.form.get('percent_below'))) / 100
+            dif_minutes = int(request.form.get('minutes'))
+            destination = request.form.get('destination')
 
             # Single Hash
             hash = request.form.get('hash')
@@ -92,23 +117,27 @@ def index():
             if "error" in hash_data:
                 error_message = hash_data["error"]
             else:
-                # start_time, usd_value = print_in_tx(hash_data)
-                start_time = hash_data[0]["blockTimestamp"]
+                limit_time = hash_data[0]["blockTimestamp"]
                 usd_value = hash_data[0]["historicalUSD"]
-                if start_time is None or usd_value is None:
+                if limit_time is None or usd_value is None:
                     error_message = "Error with the input hash or blockchain not supported."
                 else:
-                    transfers_data = arkham_transfers(headers, start_time, usd_value, percent_above, percent_below)
+                    if destination == 'To':
+                        transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below)
+                    else:
+                        transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below)
                     if 'error' in transfers_data:
                         error_message = transfers_data['error']
                     else:
                         transfers_pre = transfers_data.get('transfers', [])
                         for transfer in transfers_pre:
-                            original_hash_timestamp_dt = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ")
+                            original_hash_timestamp_dt = datetime.strptime(limit_time, "%Y-%m-%dT%H:%M:%SZ")
                             original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                             transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                             transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                            if transfer_timestamp > original_hash_timestamp:
+                            if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000):
+                                transfers.append(transfer)
+                            elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000):
                                 transfers.append(transfer)
     except Exception as e:
         error_display = "There were an error, check the console for logs"
@@ -128,6 +157,8 @@ def index():
             }
             percent_above = (100 - float(request.form.get('percent_above'))) / 100
             percent_below = (100 + float(request.form.get('percent_below'))) / 100
+            dif_minutes = int(request.form.get('minutes'))
+            destination = request.form.get('destination')
 
             # Multiple Hashes
             hashes_input = request.form.get('hashes')
@@ -168,13 +199,16 @@ def index():
                     error_message = hash_data_multiple["error"]
                 else:
                     # start_time, usd_value = print_in_tx_multiple(hash_data_multiple)
-                    start_time = hash_data_multiple[0]["blockTimestamp"]
+                    limit_time = hash_data_multiple[0]["blockTimestamp"]
                     usd_value = hash_data_multiple[0]["historicalUSD"]
 
-                    if start_time is None or usd_value is None:
+                    if limit_time is None or usd_value is None:
                         error_message = "Error with the input hash or blockchain not supported."
                     else:
-                        transfers_data = arkham_transfers(headers, start_time, usd_value, percent_above, percent_below)
+                        if destination == 'To':
+                            transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below)
+                        else:
+                            transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below)
                         if 'error' in transfers_data:
                             error_message = transfers_data['error']
                         else:
@@ -182,11 +216,13 @@ def index():
                             transfers_multiple = []
 
                             for transfer in transfers_multiple_pre:
-                                original_hash_timestamp_dt = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ")
+                                original_hash_timestamp_dt = datetime.strptime(limit_time, "%Y-%m-%dT%H:%M:%SZ")
                                 original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                                 transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                                 transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                                if transfer_timestamp > original_hash_timestamp:
+                                if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000):
+                                    transfers_multiple.append(transfer)
+                                elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000):
                                     transfers_multiple.append(transfer)
 
                             for transfer in transfers_multiple:

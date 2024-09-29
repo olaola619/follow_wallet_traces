@@ -127,7 +127,7 @@ hr {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     margin-bottom: 10px;
-    width: 20%; /* Aumenta el ancho del contenedor */
+    width: 25%; /* Aumenta el ancho del contenedor */
     padding: 20px; /* Añade más espacio alrededor del contenido */
     padding-right: 40px;
 }
