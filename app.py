@@ -34,7 +34,7 @@ def arkham_transfers_asc(headers, start_time_str, usd_value, percent_above, perc
     start_time = int(str_time_dt.timestamp() * 1000)
     
     params = {
-        "base": ["fixedfloat", "changenow", "simpleswap"],
+        "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
         "flow": "out",
         "timeGte": start_time,
         "sortKey": "time",
@@ -57,7 +57,7 @@ def arkham_transfers_desc(headers, end_time_str, usd_value, percent_above, perce
     end_time = int(str_time_dt.timestamp() * 1000)
     
     params = {
-        "base": ["fixedfloat", "changenow", "simpleswap"],
+        "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
         "flow": "in",
         "timeLte": end_time,
         "sortKey": "time",
