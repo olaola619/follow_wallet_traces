@@ -139,9 +139,9 @@ def index():
                             original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                             transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                             transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                            if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000):
+                            if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", None) == False:
                                 transfers.append(transfer)
-                            elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000):
+                            elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", None) == False:
                                 transfers.append(transfer)
     except Exception as e:
         error_display = "There were an error, check the console for logs"
@@ -226,9 +226,9 @@ def index():
                                 original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                                 transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                                 transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                                if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000):
+                                if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", None) == False:
                                     transfers_multiple.append(transfer)
-                                elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000):
+                                elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", None) == False:
                                     transfers_multiple.append(transfer)
 
                             for transfer in transfers_multiple:
