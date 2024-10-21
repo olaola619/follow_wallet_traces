@@ -13,25 +13,42 @@
 
     <!-- Formulario para el campo de la API Key (se envía en ambos formularios) -->
     <div class="api-key-container">
-        <label for="api_key">Enter the Arkham API key:</label><br>
-        <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required><br>
-        <label for="percent_below">Enter % (only number) for max value searching transaction:</label><br>
-        <input type="text" id="percent_below" name="percent_below" class="long-input" placeholder="1 means hash_introduced_USD_value * 1.01" required><br>
-        <label for="percent_above">Enter % (only number) for min value searching transaction:</label><br>
-        <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5 means hash_introduced_USD_value * 0.95" required><br>
-        <label for="minutes">Enter min-max diference in minutes searching transactions:</label><br>
-        <input type="text" id="minutes" name="minutes" class="long-input" placeholder="60 means 60 minutes max-min difference" required><br>
-        <label for="entities">Enter the entities (one per line):</label><br>
-        <textarea id="entities" name="entities" rows="5" required>
+        <div class="column left-column">
+            <label for="api_key">Enter the Arkham API key:</label><br>
+            <input type="text" id="api_key" name="api_key" placeholder="Your API Key" required><br>
+            <label for="percent_below">Enter % (only number) for max value searching transaction:</label><br>
+            <input type="text" id="percent_below" name="percent_below" class="long-input" placeholder="1 means hash_introduced_USD_value * 1.01" required><br>
+            <label for="percent_above">Enter % (only number) for min value searching transaction:</label><br>
+            <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5 means hash_introduced_USD_value * 0.95" required><br>
+            <label for="minutes">Enter min-max diference in minutes searching transactions:</label><br>
+            <input type="text" id="minutes" name="minutes" class="long-input" placeholder="60 means 60 minutes max-min difference" required><br>
+            <label for="entities">Enter the entities (one per line):</label><br>
+            <textarea id="entities" name="entities" rows="5" required>
 fixedfloat
 changenow
 simpleswap
 0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1</textarea>
-        <label for="destination">Hash introduced is:</label><br>
-        <select id="destination" name="destination" required>
-            <option value="From">From</option>
-            <option value="To">To</option> 
-        </select> Entities above
+            <label for="blockchains">Enter the blockchains (one per line):</label><br>
+            <textarea id="blockchains" name="blockchains" rows="5" placeholder="Enter each blockchain name on a new line" required></textarea>
+            <label for="destination">Hash introduced is:</label><br>
+            <select id="destination" name="destination" required>
+                <option value="From">From</option>
+                <option value="To">To</option> 
+            </select> Entities above
+        </div>
+        <div class="column right-column">
+            <h3>List of blockchain names</h3>
+ethereum<br>
+avalanche<br>
+bsc<br>
+base<br>
+polygon<br>
+arbitrum<br>
+optimism<br>
+linea<br>
+bitcoin<br>
+tron<br>
+        </div>
     </div>
 
     <!-- Contenedor de las dos columnas (Programa actual y nuevo programa) -->
@@ -188,6 +205,13 @@ simpleswap
             entitiesInput.setAttribute('name', 'entities');
             entitiesInput.setAttribute('value', entities);
             form.appendChild(entitiesInput);
+
+            const blockchains = document.getElementById('blockchains').value;
+            const blockchainsInput = document.createElement('input');
+            blockchainsInput.setAttribute('type', 'hidden');
+            blockchainsInput.setAttribute('name', 'blockchains');
+            blockchainsInput.setAttribute('value', blockchains);
+            form.appendChild(blockchainsInput);
 
             return true;
         }

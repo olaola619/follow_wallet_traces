@@ -97,6 +97,8 @@ def index():
             destination = request.form.get('destination')
             entities = request.form.get('entities')
             entities = entities.splitlines()
+            blockchainNames = request.form.get('blockchains')
+            blockchainNames = blockchainNames.splitlines()
 
             # Single Hash
             hash = request.form.get('hash')
@@ -139,9 +141,9 @@ def index():
                             original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                             transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                             transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                            if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", False) == False:
+                            if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", False) == False and transfer.get("chain", transfer.get("fromAddress", {}).get("chain", None)) in blockchainNames:
                                 transfers.append(transfer)
-                            elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", False) == False:
+                            elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", False) == False and transfer.get("chain", transfer.get("fromAddress", {}).get("chain", None)) in blockchainNames:
                                 transfers.append(transfer)
     except Exception as e:
         error_display = "There were an error, check the console for logs"
@@ -165,6 +167,8 @@ def index():
             destination = request.form.get('destination')
             entities = request.form.get('entities')
             entities = entities.splitlines()
+            blockchainNames = request.form.get('blockchains')
+            blockchainNames = blockchainNames.splitlines()
 
             # Multiple Hashes
             hashes_input = request.form.get('hashes')
@@ -226,9 +230,9 @@ def index():
                                 original_hash_timestamp = int(original_hash_timestamp_dt.timestamp() * 1000)
                                 transfer_timestamp_dt = datetime.strptime(transfer["blockTimestamp"], "%Y-%m-%dT%H:%M:%SZ")
                                 transfer_timestamp = int(transfer_timestamp_dt.timestamp() * 1000)
-                                if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", False) == False:
+                                if destination == 'To' and transfer_timestamp > original_hash_timestamp and transfer_timestamp < (original_hash_timestamp + dif_minutes * 60000) and transfer.get("toIsContract", False) == False and transfer.get("chain", transfer.get("fromAddress", {}).get("chain", None)) in blockchainNames:
                                     transfers_multiple.append(transfer)
-                                elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", False) == False:
+                                elif destination == 'From' and transfer_timestamp < original_hash_timestamp and transfer_timestamp > (original_hash_timestamp - dif_minutes * 60000) and transfer.get("fromIsContract", False) == False and transfer.get("chain", transfer.get("fromAddress", {}).get("chain", None)) in blockchainNames:
                                     transfers_multiple.append(transfer)
 
                             for transfer in transfers_multiple:
