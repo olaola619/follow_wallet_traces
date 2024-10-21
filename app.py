@@ -27,14 +27,15 @@ def arkham_transfer_hash(hash, chain, transferType, headers):
     response = arkham_request(url, headers=headers, params=params)
     return response
 
-def arkham_transfers_asc(headers, start_time_str, usd_value, percent_above, percent_below):
+def arkham_transfers_asc(headers, start_time_str, usd_value, percent_above, percent_below, entities):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M:%SZ")
     # str_time_dt += timedelta(minutes = 1)
     start_time = int(str_time_dt.timestamp() * 1000)
     
     params = {
-        "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
+        # "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
+        "base": entities,
         "flow": "out",
         "timeGte": start_time,
         "sortKey": "time",
@@ -50,14 +51,15 @@ def arkham_transfers_asc(headers, start_time_str, usd_value, percent_above, perc
     else:
         return {"error": f"Error in API request: {response.status_code}"}
 
-def arkham_transfers_desc(headers, end_time_str, usd_value, percent_above, percent_below):
+def arkham_transfers_desc(headers, end_time_str, usd_value, percent_above, percent_below, entities):
     url = "https://api.arkhamintelligence.com/transfers"
     str_time_dt = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M:%SZ")
     # str_time_dt += timedelta(minutes = 1)
     end_time = int(str_time_dt.timestamp() * 1000)
     
     params = {
-        "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
+        # "base": ["fixedfloat", "changenow", "simpleswap", "0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1"],
+        "base": entities,
         "flow": "in",
         "timeLte": end_time,
         "sortKey": "time",
@@ -93,6 +95,8 @@ def index():
             percent_below = (100 + float(request.form.get('percent_below'))) / 100
             dif_minutes = int(request.form.get('minutes'))
             destination = request.form.get('destination')
+            entities = request.form.get('entities')
+            entities = entities.splitlines()
 
             # Single Hash
             hash = request.form.get('hash')
@@ -123,9 +127,9 @@ def index():
                     error_message = "Error with the input hash or blockchain not supported."
                 else:
                     if destination == 'To':
-                        transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below)
+                        transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below, entities)
                     else:
-                        transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below)
+                        transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below, entities)
                     if 'error' in transfers_data:
                         error_message = transfers_data['error']
                     else:
@@ -159,6 +163,8 @@ def index():
             percent_below = (100 + float(request.form.get('percent_below'))) / 100
             dif_minutes = int(request.form.get('minutes'))
             destination = request.form.get('destination')
+            entities = request.form.get('entities')
+            entities = entities.splitlines()
 
             # Multiple Hashes
             hashes_input = request.form.get('hashes')
@@ -206,9 +212,9 @@ def index():
                         error_message = "Error with the input hash or blockchain not supported."
                     else:
                         if destination == 'To':
-                            transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below)
+                            transfers_data = arkham_transfers_asc(headers, limit_time, usd_value, percent_above, percent_below, entities)
                         else:
-                            transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below)
+                            transfers_data = arkham_transfers_desc(headers, limit_time, usd_value, percent_above, percent_below, entities)
                         if 'error' in transfers_data:
                             error_message = transfers_data['error']
                         else:

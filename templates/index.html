@@ -21,11 +21,17 @@
         <input type="text" id="percent_above" name="percent_above" class="long-input" placeholder="5 means hash_introduced_USD_value * 0.95" required><br>
         <label for="minutes">Enter min-max diference in minutes searching transactions:</label><br>
         <input type="text" id="minutes" name="minutes" class="long-input" placeholder="60 means 60 minutes max-min difference" required><br>
+        <label for="entities">Enter the entities (one per line):</label><br>
+        <textarea id="entities" name="entities" rows="5" required>
+fixedfloat
+changenow
+simpleswap
+0xEbA88149813BEc1cCcccFDb0daCEFaaa5DE94cB1</textarea>
         <label for="destination">Hash introduced is:</label><br>
         <select id="destination" name="destination" required>
             <option value="From">From</option>
             <option value="To">To</option> 
-        </select> FF, SS or CN
+        </select> Entities above
     </div>
 
     <!-- Contenedor de las dos columnas (Programa actual y nuevo programa) -->
@@ -175,6 +181,13 @@
             destinationInput.setAttribute('name', 'destination');
             destinationInput.setAttribute('value', destination);
             form.appendChild(destinationInput);
+
+            const entities = document.getElementById('entities').value;
+            const entitiesInput = document.createElement('input');
+            entitiesInput.setAttribute('type', 'hidden');
+            entitiesInput.setAttribute('name', 'entities');
+            entitiesInput.setAttribute('value', entities);
+            form.appendChild(entitiesInput);
 
             return true;
         }
